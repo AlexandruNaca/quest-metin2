@@ -1,0 +1,184 @@
+quest gara begin
+    state start begin
+		when login with pc.level > 29 begin
+			send_letter("Ajutor pentru Yonah.")
+			local v = find_npc_by_vnum(20005)
+		    target.vid("__TARGET__", v, "Yonah")
+		end
+		
+		when info or button begin
+			say_title("Ajutor pentru Yonah.")
+			say("Yonah i-a spus grajdarului care ti-a trimis")
+			say("aceasta scrisoare sa vii pana la el.Are sa")
+			say("iti dea de lucru in olaria lui.")
+			say("Vorbeste cu Yonah,este in prima harta")
+			say("a regatului tau.")
+		end
+		
+		when __TARGET__.target.click begin
+		    say_title("Yonah:")
+			say("Salut "..pc.get_name().." .")
+			say("Bine ai venit in olaria mea!")
+			say("Familia mea duce de generatii intregi")
+			say("arta olaritului.Din ne-atentie,")
+			say("mi-am spart pretiosul Portelan Celadon.")
+			say("E cristal pur,si pretios.Dar arta..ptua!")
+			say_item("Portelan aurit","70018","")
+			wait()
+			say_title("Yonah:")
+			say("De recuperat,este imposibil,insa,as putea")
+			say("sa creez unul.Iti voi da o lista intreaga")
+			say("cu materialele.Atentie,adumi-le in ordinea")
+			say("in care ti le scriu pe lista.")
+			say("Prima data am nevoie de scule pentru a-l")
+			say("produce.Am nevoie de un vas de lemn.")
+			say_item("Vas pentru olarit","30205","")
+			wait()
+			say_title("Yonah")
+			say("Bine inteles,poti refuza aceasta sarcina.")
+			say("Ajutorul nu e obligatoriu...")
+			local s = select ("Te ajut.", "N-am timp..")
+			if s == 1 then
+				say_title("Yonah:")
+				say("Intotdeuna ma pot baza pe tine.")
+				say("Incepe sa omori buturugi de lemn.")
+				say("Este materialul perfect pentru vasul meu")
+				target.delete("__TARGET__")
+				set_state(state2)
+			elseif s == 2 then
+			    say_title("Yonah:")
+				say("In acest caz..pacat.")
+				set_state(fail)
+				target.delete("__TARGET__")
+			end
+		end
+	end
+	state state2 begin
+		when letter begin
+			send_letter("Ucide buturugi.")
+		end
+		
+		when info or button begin
+			say_title("Ajutor pentru Yonah - Ucide buturugi")
+			say("Yonah ti-a dat informatia ca si-a spart")
+			say("portelanul preferat.Trebuie sa faci")
+			say("mai intai,rost de un vas de lemn.Este")
+			say("facut din lemn,deci poate gasesti la buturugi")
+			say("Incearca si vezi daca resuesti sa faci rost")
+			say("de lemn de la ele.")
+		end
+		when 2312.kill begin
+		    local n = number(0,50)
+			if n == 1 then
+			    notice("Aceasta buturuga contine lemn de calitate superioara!")
+				notice("Ai primit o bucata!")
+				pc.give_item2(50602, 1)
+				set_state(state3)
+			else 
+			    notice("Aceasta buturuga are un lemn plin de ciuperci putrezite.")
+			end
+		end
+	end
+	state state3 begin
+		when letter begin
+			send_letter("Ai obtinut lemn.")
+			local v = find_npc_by_vnum(20005)
+		    target.vid("Olar", v, "Yonah")
+		end
+		
+		when info or button begin
+			say_title("Ai obtinut lemn.")
+			say("Ai obtinut o bucata de lemn!Ce lipicioasa e!")
+			say("Numai buna pentru vasul in care trebuie sa")
+			say("olareasca noul vas Yonah.")
+		end
+		when Olar.target.click begin
+		    if pc.count_item(50602) > 0 then
+			    say_title("Yonah:")
+				say("Acest lemn este prelucrat foarte frumos.")
+				say("Imediat voi face un vas de lemn...")
+				say(". . .")
+				say(". . .")
+				say(". . .")
+				say("Vasul este gata!")
+				say("Acum am nevoie de ceva aur!Il vei gasii")
+				say("la grajdar.Spune-i ca i-am cerut eu.")
+				say_item_vnum(80008)
+				pc.remove_item(50602, 1)
+				target.delete("Olar")
+				set_state(state4)
+			else
+			    say_title("Yonah:")
+				say("In inventarul tau nu vad niciun lemn.")
+				say("Uite,cam asa arata:")
+				say_item_vnum(80008)
+				say("Unde l-ai pierdut?")
+			end
+		end
+	end
+	state state4 begin
+		when letter begin
+			send_letter("Indreapta-te catre grajdar.")
+			local v = find_npc_by_vnum(20349)
+		    target.vid("Grajdar", v, "Ponei")
+		end
+		
+		when info or button begin
+			say_title("Obtine aur.")
+			say("Ai obtinut o bucata de lemn!Ce lipicioasa e!")
+			say("Numai buna pentru vasul in care trebuie sa")
+			say("olareasca noul vas Yonah.Acum trebuie sa faci")
+			say("rost de aur.Grajdarul te va ajuta!")
+		end	
+	    when Grajdar.target.click begin
+		    say_title("Grajdar:")
+			say("Pe prietenul meu Yonah?")
+			say("Cum sa nu-l ajut !")
+			say("Poftim,uite aici aurul.")
+			pc.give_item2(80008, 1)
+			say_item_vnum(80008)
+			target.delete("Grajdar")
+			set_state(state5)
+		end
+	end
+	state state5 begin
+		when letter begin
+			send_letter("Ai obtinut aur.")
+			local v = find_npc_by_vnum(20005)
+		    target.vid("__TARGET__22", v, "Yonah")
+		end
+		
+		when info or button begin
+			say_title("Ajutor pentru Yonah.")
+			say("Ai obtinut bucata de aur.Acum putem")
+			say("repara vasul de aur.Vorbeste cu")
+			say("Yonah.")
+		end	    
+		when __TARGET__22.target.click begin
+		    if pc.count_item(80008) > 0 then
+			    say_title("Yonah:")
+				say("Perfect!Acum voi putea sa fac portelanul")
+				say("Trebuie sa mestec aurul..Oh,e gata!")
+				say_item("Portelanul auriu","70018","")
+				say("Multumesc")
+				wait()
+				say_title("Yonah:")
+				say("Acum,bine-meritata ta recompensa pentru ajutorul")
+				say("oferi mie.Iti multumesc,o zi buna!")
+				say("Ai primit 5000000 experienta")
+				say("Ai primit 5000000 yang.")
+				pc.remove_item(80008, 1)
+				pc.give_exp2(5000000)
+				pc.change_gold(5000000)
+				target.delete("__TARGET__22")
+				set_state(fail)
+			else
+			    say_title("Yonah:")
+				say("Nu ai bucata de aur...")
+				say_item_vnum(50626)
+			end
+		end
+	end
+	state fail begin
+	end
+end    
